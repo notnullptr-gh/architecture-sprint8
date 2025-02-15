@@ -8,6 +8,8 @@ import os
 import jwt
 import time
 
+from jwt.exceptions import InvalidSignatureError
+
 
 addr = f"{os.environ['FLASK_KEYCLOCK']}/realms/reports-realm"
 
@@ -29,20 +31,21 @@ authorized_roles = [
 ]
 
 
-key = None
-if keys.keys:
-    key = keys.keys[0].as_pem()
+keys = [k.as_pem() for k in keys.keys]
 
 
 APP = Flask(__name__)
 
 
 def validate_token(token):
-    if key:
-        decoded_token = jwt.decode(token, key, algorithms=['HS256', 'RS256'])
-        for role in decoded_token['realm_access']['roles']:
-            if role in authorized_roles:
-                return True
+    for key in keys:
+        try:
+            decoded_token = jwt.decode(token, key, algorithms=['HS256', 'RS256'])
+            for role in decoded_token['realm_access']['roles']:
+                if role in authorized_roles:
+                    return True
+        except InvalidSignatureError:
+            pass
     return False
 
 
