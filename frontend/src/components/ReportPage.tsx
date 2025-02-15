@@ -16,7 +16,7 @@ const ReportPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/reports`, {
+      const response = await fetch(`reports`, {
         headers: {
           'Authorization': `Bearer ${keycloak.token}`
         }
@@ -51,7 +51,6 @@ const ReportPage: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-6">Usage Reports</h1>
-        
         <button
           onClick={downloadReport}
           disabled={loading}
@@ -68,6 +67,16 @@ const ReportPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <div className="mt-5 p-8 bg-white rounded-lg shadow-md">
+        <button 
+			onClick={() => keycloak.logout()}
+            className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600`}
+		>
+			logout
+        </button>
+      </div>
+
     </div>
   );
 };
